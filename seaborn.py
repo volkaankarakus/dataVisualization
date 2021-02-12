@@ -74,7 +74,7 @@ sorted_data=data.reindex(new_index)
 
 #visualization
 plt.figure(figsize=(15,10)) # gorsellestirme icin sns kullanicaz bu satir sadece figur acmak icin uzunluk girdik.
-sns.barplot(x=sorted_data['state list'],y=sorted_data['state poverty ratio'])
+sns.barplot(x=sorted_data['area list'],y=sorted_data['area poverty ratio'])
 plt.xticks(rotation=45) # state listleri 45 derecelik aciyla dik koyduk.
 plt.xlabel('States')
 plt.ylabel('Poverty Rate')
@@ -301,3 +301,108 @@ plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%')
 plt.title('Killed People According to Races',color = 'blue',fontsize = 15)
 
 
+#%% LM PLOT *************************
+
+data.head()
+# Visualization of high school graduation rate vs Poverty rate of each state with different style of seaborn code
+# lmplot 
+# Show the results of a LINEAR REGRESSION within each dataset
+sns.lmplot(x="area_poverty_ratio", y="area_highschool_ratio", data=data)
+plt.show()
+
+#%% KDE PLOT
+
+# Visualization of high school graduation rate vs Poverty rate of each state with different style of seaborn code
+# cubehelix plot
+sns.kdeplot(data.area_poverty_ratio, data.area_highschool_ratio, shade=True, cut=3)
+plt.show()
+
+#%% VIOLIN PLOT  ***********************************
+# Show each distribution with both violins and points
+# Use cubehelix to get a custom sequential palette
+pal = sns.cubehelix_palette(2, rot=-.5, dark=.3)
+sns.violinplot(data=data, palette=pal, inner="points")
+plt.show()
+
+#%%HEATMAP *************************************
+data.corr()
+# Visualization of high school graduation rate vs Poverty rate of each state with different style of seaborn code
+f,ax = plt.subplots(figsize=(5, 5))
+sns.heatmap(data.corr(), annot=True, linewidths=0.5,linecolor="red", fmt= '.1f',ax=ax) #annot true olunca oranlar da grafikte yazar.
+plt.show()
+
+#%% BOX PLOT (%25,Median,%75, max ve outlierlari verir.) ************
+kill.head()
+kill.manner_of_death.unique() #array(['shot', 'shot and Tasered'], dtype=object)
+
+# manner of death(olum sekli) : ates edilerek, ates edilerek ve sok tabancasiyla
+# gender cinsiyet
+# age: yas
+# Plot the orbital period with horizontal boxes
+sns.boxplot(x="gender", y="age", hue="manner_of_death", data=kill, palette="PRGn") #PRGn dedigi renk
+plt.show()
+
+#%% SWARM PLOT (Classification icin onemli, iyi ve anlasilir bir cikarim yapar.)************
+# buyuk datalarda cizdirirken PC'yi zorlar.
+kill.head()
+# swarm plot
+# manner of death(olum sekli) : ates edilerek, ates edilerek ve sok tabancasiyla
+# gender cinsiyet
+# age: yas
+sns.swarmplot(x="gender", y="age",hue="manner_of_death", data=kill)
+plt.show()    # x'e gender'in unique degerlerini koyar(M,F), y'ye yasi koyar.degerleri de hue ile ne istiyorsak ona koyuyoruz.
+                # oldurulme seklini hue'ya koyduk.
+
+#%% COUNT PLOT *********************
+kill.gender.value_counts()
+# M    2428
+# F     107
+# Name: gender, dtype: int64
+
+kill.head()
+# kill properties
+# Manner of death
+sns.countplot(kill.gender)
+#sns.countplot(kill.manner_of_death)
+plt.title("gender",color = 'blue',fontsize=15)
+# kill weapon
+armed = kill.armed.value_counts()
+#print(armed)
+plt.figure(figsize=(10,7))
+sns.barplot(x=armed[:7].index,y=armed[:7].values)
+plt.ylabel('Number of Weapon')
+plt.xlabel('Weapon Types')
+plt.title('Kill weapon',color = 'blue',fontsize=15)
+# age of killed people
+above25 =['above25' if i >= 25 else 'below25' for i in kill.age]
+df = pd.DataFrame({'age':above25})
+sns.countplot(x=df.age)
+plt.ylabel('Number of Killed People')
+plt.title('Age of killed people',color = 'blue',fontsize=15)
+# Race of killed people
+sns.countplot(data=kill, x='race')
+plt.title('Race of killed people',color = 'blue',fontsize=15)
+# Most dangerous cities
+city = kill.city.value_counts()
+plt.figure(figsize=(10,7))
+sns.barplot(x=city[:12].index,y=city[:12].values)
+plt.xticks(rotation=45)
+plt.title('Most dangerous cities',color = 'blue',fontsize=15)
+# most dangerous states
+state = kill.state.value_counts()
+plt.figure(figsize=(10,7))
+sns.barplot(x=state[:20].index,y=state[:20].values)
+plt.title('Most dangerous state',color = 'blue',fontsize=15)
+# Having mental ilness or not for killed people
+sns.countplot(kill.signs_of_mental_illness)
+plt.xlabel('Mental illness')
+plt.ylabel('Number of Mental illness')
+plt.title('Having mental illness or not',color = 'blue', fontsize = 15)
+# Threat types
+sns.countplot(kill.threat_level)
+plt.xlabel('Threat Types')
+plt.title('Threat types',color = 'blue', fontsize = 15)
+# Flee types
+sns.countplot(kill.flee)
+plt.xlabel('Flee Types')
+plt.title('Flee types',color = 'blue', fontsize = 15)
